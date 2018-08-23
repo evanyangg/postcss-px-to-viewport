@@ -30,6 +30,13 @@ module.exports = postcss.plugin('postcss-px-to-viewport', function (options) {
 
   return function (css) {
 
+    if (options.exclude) {  // 添加对exclude选项的处理
+      if (Object.prototype.toString.call(options.exclude) !== '[object RegExp]') {
+        throw new Error('options.exclude should be RegExp!')
+      }
+      if (decl.source.input.file.match(options.exclude) !== null) return;
+    }
+    
     css.walkDecls(function (decl, i) {
       // This should be the fastest test and will remove most declarations
       if (decl.value.indexOf(opts.unitToConvert) === -1) return;
